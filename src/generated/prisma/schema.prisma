@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(cuid())
+  name            String
+  email           String           @unique
+  password        String
+  role            Role             @default(CLIENT)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  serviceRequests ServiceRequest[]
+  packageRequests PackageRequest[]
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+model Service {
+  id              String           @id @default(cuid())
+  name            String
+  shortDesc       String
+  icon            String
+  detailedDesc    String           @db.Text
+  price           Float
+  coverImage      String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  packages        Package[]
+  serviceRequests ServiceRequest[]
+}
+
+model Package {
+  id              String           @id @default(cuid())
+  name            String
+  description     String
+  price           Float
+  serviceId       String
+  service         Service          @relation(fields: [serviceId], references: [id])
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  packageRequests PackageRequest[]
+}
+
+model ServiceRequest {
+  id        String        @id @default(cuid())
+  userId    String
+  serviceId String
+  status    RequestStatus @default(PENDING)
+  message   String?       @db.Text
+  user      User          @relation(fields: [userId], references: [id])
+  service   Service       @relation(fields: [serviceId], references: [id])
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model PackageRequest {
+  id        String        @id @default(cuid())
+  userId    String
+  packageId String
+  status    RequestStatus @default(PENDING)
+  message   String?       @db.Text
+  user      User          @relation(fields: [userId], references: [id])
+  package   Package       @relation(fields: [packageId], references: [id])
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

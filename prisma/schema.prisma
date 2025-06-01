@@ -1,0 +1,276 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  emailVerified Boolean   @default(false)
+  role          Role      @default(CLIENT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  serviceRequests ServiceRequest[]
+  packageRequests PackageRequest[]
+  entreprises    Entreprise[] // <-- Ajoutez cette ligne pour la relation inverse
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  services      Service[]
+  packages      Package[]
+  news          News[]
+}
+
+// Service proposé par l'entreprise
+model Service {
+  id              String    @id @default(cuid())
+  name            String
+  shortDesc       String
+  icon             String?
+  color            String?  // <-- Ajouté
+  detailedDesc    String?    @db.Text
+  price           Float?
+  coverImage      String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  packages        Package[]
+  serviceRequests ServiceRequest[]
+  adminId         String?
+  admin           Admin?    @relation(fields: [adminId], references: [id])
+}
+
+// Demande de service faite par un utilisateur
+model ServiceRequest {
+  id          String    @id @default(cuid())
+  userId      String
+  serviceId   String
+  status      RequestStatus @default(PENDING)
+  message     String?   @db.Text
+  user        User      @relation(fields: [userId], references: [id])
+  service     Service   @relation(fields: [serviceId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Package {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  serviceId   String
+  service     Service   @relation(fields: [serviceId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  packageRequests PackageRequest[]
+  adminId     String?
+  admin       Admin?    @relation(fields: [adminId], references: [id])
+}
+
+model PackageRequest {
+  id          String    @id @default(cuid())
+  userId      String
+  packageId   String
+  status      RequestStatus @default(PENDING)
+  message     String?   @db.Text
+  user        User      @relation(fields: [userId], references: [id])
+  package     Package   @relation(fields: [packageId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Newsletter {
+  id        String   @id @default(uuid())
+  name      String?  // ← Rendez ce champ optionnel (ajoute le ?)
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model News {
+  id           String   @id @default(cuid())
+  titre        String
+  imageCover   String
+  imageCart    String
+  description  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime  @updatedAt
+  adminId      String?
+  admin        Admin?    @relation(fields: [adminId], references: [id])
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  prenom    String
+  nom       String
+  email     String
+  telephone String?
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Rdv {
+  id        String   @id @default(cuid())
+  prenom    String
+  nom       String
+  email     String
+  telephone String?
+  message   String?
+  date      DateTime // Date du rendez-vous
+  heure     String   // Heure du rendez-vous (ex: "14:00")
+  typeMeet  String   // "en ligne" ou "physique"
+  createdAt DateTime @default(now())
+}
+
+// Exemple d'un modèle/table sans colonne personnalisée (seulement un id)
+model EmptyTable {
+  id String @id @default(cuid())
+}
+
+model Entreprise {
+  id          String   @id @default(cuid())
+  nom         String
+  emailPro    String   @unique
+  telephone   String
+  mf          String   @unique
+  adresse     String
+  siteweb     String?
+  service     String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Partner {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  logo      String?
+  createdAt DateTime @default(now())
+}
+
+model Temoignage {
+  id        String   @id @default(cuid())
+  nom       String
+  message   String
+  photo     String?    // URL ou chemin de la photo du client
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactHome {
+  id        String   @id @default(cuid())
+  nom       String
+  prenom    String
+  email     String
+  telephone String
+  createdAt DateTime @default(now())
+}
+
+model ContactFooter {
+  id        String   @id @default(cuid())
+  nom       String
+  prenom    String
+  email     String
+  phone     String?
+  message   String?
+  createdAt DateTime @default(now())
+}
+
+// Vos modèles Prisma sont corrects.
+
+// Pour créer les tables dans PostgreSQL :
+
+// 1. Ouvrez un terminal à la racine du projet.
+// 2. Exécutez la commande suivante :
+///
+///    npx prisma migrate dev --name init
+///
+/// 3. Suivez les instructions dans le terminal (cela va créer les tables News et Contact dans la base).
+// 4. Vérifiez dans votre base PostgreSQL que les tables existent bien.
+
+// Si vous avez déjà exécuté cette commande et que les tables ne sont toujours pas créées :
+// - Vérifiez que la variable d'environnement DATABASE_URL dans votre fichier .env pointe bien vers la bonne base PostgreSQL.
+// - Vérifiez que vous n'avez pas d'erreur dans le terminal lors de la migration.
+// - Si besoin, supprimez le dossier migrations et relancez la commande ci-dessus.
+
+// Vous avez un "drift" entre vos migrations Prisma et l'état réel de la base PostgreSQL.
+// Pour corriger ce problème et synchroniser votre base avec le schéma actuel :
+
+// 1. Sauvegardez vos données importantes (car la base va être réinitialisée).
+// 2. Exécutez dans le terminal à la racine du projet :
+///
+///    npx prisma migrate reset
+///
+/// 3. Confirmez la réinitialisation quand Prisma le demande.
+// 4. Cela va : 
+//    - Supprimer toutes les tables existantes
+//    - Recréer toutes les tables selon votre schema.prisma et vos migrations
+//    - Appliquer toutes les migrations
+//    - (Optionnel) Exécuter le script seed si vous en avez un
+//
+// Vous devez exécuter la commande suivante pour corriger le drift et créer les tables News et Contact :
+//
+//    npx prisma migrate reset
+//
+// Cela va :
+//   - Supprimer toutes les tables existantes dans la base "xi"
+//   - Recréer toutes les tables selon votre schema.prisma (y compris News et Contact)
+//   - Appliquer toutes les migrations
+//   - (Optionnel) Exécuter le script seed si vous en avez un
+//
+// ⚠️ Attention : Toutes les données existantes seront supprimées.
+//
+// Après cela, vos tables seront bien créées et synchronisées avec votre schéma Prisma.
+
+// CAS PRATIQUE : 
+// Pour corriger le drift et créer les tables News et Contact dans votre base PostgreSQL :
+//
+// 1. Sauvegardez vos données importantes (car la base va être réinitialisée).
+// 2. Ouvrez un terminal à la racine de votre projet.
+// 3. Exécutez la commande suivante :
+//
+//    npx prisma migrate reset
+//
+// 4. Confirmez la réinitialisation quand Prisma le demande.
+//
+// Cette commande va :
+//   - Supprimer toutes les tables existantes dans la base "xi"
+//   - Recréer toutes les tables selon votre schema.prisma (y compris News et Contact)
+//   - Appliquer toutes les migrations
+//   - (Optionnel) Exécuter le script seed si vous en avez un
+//
+// ⚠️ Attention : Toutes les données existantes seront supprimées.
+//
+// Après cela, vos tables seront bien créées et synchronisées avec votre schéma Prisma.

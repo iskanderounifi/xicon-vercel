@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Service" ADD COLUMN     "color" TEXT,
+ALTER COLUMN "icon" DROP NOT NULL,
+ALTER COLUMN "detailedDesc" DROP NOT NULL,
+ALTER COLUMN "price" DROP NOT NULL,
+ALTER COLUMN "coverImage" DROP NOT NULL;
