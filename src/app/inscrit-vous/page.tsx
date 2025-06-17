@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Footer from '../components/home/footer';
 import RegisterForm from '../components/inscrit/inscritVous';

@@ -7,7 +7,7 @@ import StatsSection from "./components/home/Stats-Section";
 import NosServices from "./components/home/nos-services";
 import CreationProcess from "./components/home/process";
 import NewsletterSection from "./components/home/newletter";
-import NosValeursSection from "./components/home/nos-valeur";
+import  ValuesSection from "./components/home/nos-valeur";
 import TestimonialsSection from "./components/home/Testimonial";
 import ContactSection from "./components/home/contact";
 import Footer from "./components/home/footer";
@@ -24,7 +24,7 @@ export default function Home() {
       <NosServices/>
       <CreationProcess/>
       <NewsletterSection/>
-      <NosValeursSection/>
+      <ValuesSection/>
       <TestimonialsSection/>
       <CtaBlock/>
       <NewsSection/>

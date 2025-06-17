@@ -217,14 +217,14 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="flex min-h-screen bg-slate-50">
-      {/* Sidebar */}
-      <aside className="w-72 bg-white shadow-xl flex flex-col py-8 px-6 fixed top-0 left-0 h-full z-10">
-        <h2 className="text-3xl font-bold text-slate-800 mb-10 text-center flex items-center justify-center gap-2">
-          <Settings size={30} className="text-indigo-600" />
-          Admin Panel
+      {/* Sidebar - Responsive */}
+      <aside className="fixed top-0 left-0 h-full z-20 w-72 bg-white shadow-xl flex flex-col py-8 px-6 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+        <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-10 text-center flex items-center justify-center gap-2">
+          <Settings size={24} className="text-indigo-600" />
+          <span className="hidden md:inline">Admin Panel</span>
         </h2>
         <nav className="flex-1">
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             { [
               { href: "#dashboard", icon: LayoutDashboard, label: "Tableau de bord" },
               { href: "#newsletters", icon: Mail, label: "Newsletters" },
@@ -232,35 +232,20 @@ export default async function AdminDashboardPage() {
               { href: "#services", icon: Briefcase, label: "Services & Packages" },
               { href: "#add-service", icon: PlusCircle, label: "Ajouter un service" },
               { href: "#clients", icon: Users, label: "Clients" },
-              { href: "#contacts-home", icon: Mail, label: "Contacts Hero (Home)" }, // Ajout dynamique
-              { href: "#contacts-footer", icon: Mail, label: "Contacts Footer" },    // Ajout dynamique
-              { href: "#cta", icon: ClipboardList, label: "Bloc CTA" },              // Ajout dynamique
+              { href: "#contacts-home", icon: Mail, label: "Contacts Hero (Home)" },
+              { href: "#contacts-footer", icon: Mail, label: "Contacts Footer" },
+              { href: "#cta", icon: ClipboardList, label: "Bloc CTA" },
             ].map((item) => (
               <li key={item.href}>
                 <a
                   href={item.href}
-                  className="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 font-medium transition-colors duration-150"
+                  className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 font-medium transition-colors duration-150 text-sm md:text-base"
                 >
-                  <item.icon size={20} /> {item.label}
+                  <item.icon size={18} className="flex-shrink-0" />
+                  <span className="hidden md:inline">{item.label}</span>
                 </a>
               </li>
             ))}
-            <li>
-              <a
-                href="#partners"
-                className="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 font-medium transition-colors duration-150"
-              >
-                <Handshake size={20} /> Nos partenaires
-              </a>
-            </li>
-            <li>
-              <a
-                href="#news"
-                className="flex items-center gap-3 py-3 px-4 rounded-lg text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 font-medium transition-colors duration-150"
-              >
-                <Newspaper size={20} /> Actualités
-              </a>
-            </li>
           </ul>
         </nav>
         <div className="mt-auto pt-6 border-t border-slate-200">
@@ -269,43 +254,41 @@ export default async function AdminDashboardPage() {
             className="mb-3 flex items-center justify-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline transition-colors"
           >
             <ArrowLeft size={16} />
-            Retour au site
+            <span className="hidden md:inline">Retour au site</span>
           </Link>
-          <form action="/api/auth/logout" method="POST" className="w-full">
-            <button
-              type="submit"
-              className="w-full flex items-center justify-center gap-2 text-sm font-medium text-red-600 hover:text-red-700 px-4 py-2.5 rounded-md hover:bg-red-50 transition-colors duration-150"
-            >
-              <LogOut size={16} />
-              Déconnexion
-            </button>
-          </form>
+          <Link
+            href="/api/auth/signout"
+            className="w-full flex items-center justify-center gap-2 text-sm font-medium text-red-600 hover:text-red-700 px-4 py-2 rounded-md hover:bg-red-50 transition-colors duration-150"
+          >
+            <LogOut size={16} />
+            <span className="hidden md:inline">Déconnexion</span>
+          </Link>
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 p-6 md:p-10 ml-72">
-        {/* Dashboard Home Cards */}
-        <section id="dashboard" className="mb-12">
-           <h1 className="text-3xl font-bold text-slate-800 mb-2">Tableau de bord</h1>
-           <p className="text-slate-600 mb-8">Aperçu général de votre activité.</p>
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Main content - Responsive */}
+      <main className="flex-1 p-4 md:p-6 lg:p-10 md:ml-72">
+        {/* Dashboard Home Cards - Responsive */}
+        <section id="dashboard" className="mb-8 md:mb-12">
+           <h1 className="text-2xl md:text-3xl font-bold text-slate-800 mb-2">Tableau de bord</h1>
+           <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8">Aperçu général de votre activité.</p>
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {[
               { title: "Demandes de service", count: nbDemandes, icon: ClipboardList, color: "indigo", href: "#rdvs", linkText: "Voir les demandes" },
               { title: "Inscrits Newsletter", count: nbNewsletters, icon: Mail, color: "emerald", href: "#newsletters", linkText: "Voir les inscrits" },
               { title: "Clients Enregistrés", count: nbClients, icon: Users, color: "sky", href: "#clients", linkText: "Voir les clients" },
             ].map((item) => (
-              <div key={item.title} className={`bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-t-4 border-${item.color}-500`}>
+              <div key={item.title} className={`bg-white rounded-xl shadow-lg p-4 md:p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-t-4 border-${item.color}-500`}>
                 <div className="flex items-start justify-between">
                     <div>
-                        <p className={`text-sm font-medium text-${item.color}-600`}>{item.title}</p>
-                        <span className={`text-3xl font-bold text-slate-800 mt-1 block`}>{item.count}</span>
+                        <p className={`text-xs md:text-sm font-medium text-${item.color}-600`}>{item.title}</p>
+                        <span className={`text-2xl md:text-3xl font-bold text-slate-800 mt-1 block`}>{item.count}</span>
                     </div>
-                    <div className={`p-3 rounded-lg bg-${item.color}-100 text-${item.color}-600`}>
-                        <item.icon size={24} />
+                    <div className={`p-2 md:p-3 rounded-lg bg-${item.color}-100 text-${item.color}-600`}>
+                        <item.icon size={20} className="md:w-6 md:h-6" />
                     </div>
                 </div>
-                <Link href={item.href} className={`mt-4 text-xs text-${item.color}-600 hover:text-${item.color}-800 font-medium self-start`}>
+                <Link href={item.href} className={`mt-3 md:mt-4 text-xs text-${item.color}-600 hover:text-${item.color}-800 font-medium self-start`}>
                   {item.linkText} →
                 </Link>
               </div>
@@ -313,153 +296,125 @@ export default async function AdminDashboardPage() {
           </div>
         </section>
 
-        {/* Generic Section Title and Divider Component (Conceptual) */}
-        {/* You would use this pattern for other sections */}
-        {/* <h2 className="text-2xl font-semibold text-slate-700 mb-1">Section Title</h2> */}
-        {/* <div className="border-b border-slate-200 mb-5"></div> */}
+        {/* Tables - Responsive */}
+        <div className="overflow-x-auto -mx-4 md:mx-0">
+          <div className="inline-block min-w-full align-middle">
+            {/* Newsletters Table */}
+            <section id="newsletters" className="mb-8 md:mb-12">
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-700 mb-1">Newsletters</h2>
+              <div className="border-b border-slate-200 mb-4 md:mb-5"></div>
+              <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-slate-200">
+                    <thead className="bg-slate-50">
+                      <tr>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nom</th>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date d'inscription</th>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-slate-200">
+                      {newsletters.map((n) => (
+                        <tr key={n.id} className="hover:bg-slate-50 transition-colors duration-150">
+                          <td className="py-3 px-3 md:px-5 text-sm text-slate-700 whitespace-nowrap">{n.name || '-'}</td>
+                          <td className="py-3 px-3 md:px-5 text-sm text-slate-700 whitespace-nowrap">{n.email}</td>
+                          <td className="py-3 px-3 md:px-5 text-sm text-slate-500 whitespace-nowrap">
+                            {new Date(n.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="py-3 px-3 md:px-5">
+                            <a
+                              href={`mailto:${n.email}`}
+                              className="inline-flex items-center px-2.5 py-1.5 text-xs bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 font-medium"
+                            >
+                              Contacter
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
 
-        {/* Newsletters */}
-        <section id="newsletters" className="mb-12">
-          <h2 className="text-2xl font-semibold text-slate-700 mb-1">Newsletters</h2>
-          <div className="border-b border-slate-200 mb-5"></div>
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead className="bg-slate-100">
-                  <tr>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nom</th>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date d'inscription</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-200">
-                  {newsletters.map((n) => (
-                    <tr key={n.id} className="hover:bg-slate-50 transition-colors duration-150">
-                      <td className="py-4 px-5 text-sm text-slate-700 whitespace-nowrap">{n.name || '-'}</td>
-                      <td className="py-4 px-5 text-sm text-slate-700 whitespace-nowrap">{n.email}</td>
-                      <td className="py-4 px-5 text-sm text-slate-500 whitespace-nowrap">
-                        {new Date(n.createdAt).toLocaleDateString()}
-                      </td>
-                      <td>
-                        {/* CTA: Envoyer un email */}
-                        <a
-                          href={`mailto:${n.email}`}
-                          className="inline-flex items-center px-3 py-1 text-xs bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 font-medium"
-                        >
-                          Contacter
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                  {newsletters.length === 0 && (
-                    <tr><td colSpan={4} className="py-4 px-5 text-sm text-slate-500 text-center">Aucune inscription à la newsletter.</td></tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+            {/* Rendez-vous Table */}
+            <section id="rdvs" className="mb-8 md:mb-12">
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-700 mb-1">Rendez-vous & Demandes</h2>
+              <div className="border-b border-slate-200 mb-4 md:mb-5"></div>
+              <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-slate-200">
+                    <thead className="bg-slate-50">
+                      <tr>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Client</th>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Service</th>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date RDV</th>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Heure</th>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Type</th>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Message</th>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-slate-200">
+                      {rdvs.map((r) => (
+                        <tr key={`rdv-${r.id}`} className="hover:bg-slate-50 transition-colors duration-150">
+                          <td className="py-3 px-3 md:px-5 text-sm text-slate-700 whitespace-nowrap">{r.prenom} {r.nom}</td>
+                          <td className="py-3 px-3 md:px-5 text-sm text-slate-700 whitespace-nowrap">{r.email}</td>
+                          <td className="py-3 px-3 md:px-5 text-sm text-slate-500 whitespace-nowrap">-</td>
+                          <td className="py-3 px-3 md:px-5 text-sm text-slate-500 whitespace-nowrap">{new Date(r.date).toLocaleDateString()}</td>
+                          <td className="py-3 px-3 md:px-5 text-sm text-slate-500 whitespace-nowrap">{r.heure}</td>
+                          <td className="py-3 px-3 md:px-5 text-sm text-slate-700 whitespace-nowrap">{r.typeMeet}</td>
+                          <td className="py-3 px-3 md:px-5 text-sm text-slate-600 whitespace-normal max-w-xs truncate" title={r.message || ''}>{r.message || ''}</td>
+                          <td className="py-3 px-3 md:px-5">
+                            <a
+                              href={`mailto:${r.email}`}
+                              className="inline-flex items-center px-2.5 py-1.5 text-xs bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 font-medium"
+                            >
+                              Contacter
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
           </div>
-        </section>
+        </div>
 
-        {/* Rendez-vous */}
-        <section id="rdvs" className="mb-12">
-          <h2 className="text-2xl font-semibold text-slate-700 mb-1">Rendez-vous & Demandes</h2>
-          <div className="border-b border-slate-200 mb-5"></div>
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead className="bg-slate-100">
-                  <tr>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Client</th>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Service (si demande)</th>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date RDV</th>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Heure</th>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Type</th>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Message</th>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-200">
-                  {rdvs.map((r) => (
-                    <tr key={`rdv-${r.id}`} className="hover:bg-slate-50 transition-colors duration-150">
-                      <td className="py-4 px-5 text-sm text-slate-700 whitespace-nowrap">{r.prenom} {r.nom}</td>
-                      <td className="py-4 px-5 text-sm text-slate-700 whitespace-nowrap">{r.email}</td>
-                      <td className="py-4 px-5 text-sm text-slate-500 whitespace-nowrap">-</td>
-                      <td className="py-4 px-5 text-sm text-slate-500 whitespace-nowrap">{new Date(r.date).toLocaleDateString()}</td>
-                      <td className="py-4 px-5 text-sm text-slate-500 whitespace-nowrap">{r.heure}</td>
-                      <td className="py-4 px-5 text-sm text-slate-700 whitespace-nowrap">{r.typeMeet}</td>
-                      <td className="py-4 px-5 text-sm text-slate-600 whitespace-normal max-w-xs truncate" title={r.message}>{r.message}</td>
-                      <td>
-                        {/* CTA: Envoyer un email */}
-                        <a
-                          href={`mailto:${r.email}`}
-                          className="inline-flex items-center px-3 py-1 text-xs bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 font-medium"
-                        >
-                          Contacter
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                  {serviceRequests.map((sr) => (
-                     <tr key={`sr-${sr.id}`} className="hover:bg-slate-50 transition-colors duration-150">
-                       <td className="py-4 px-5 text-sm text-slate-700 whitespace-nowrap">{sr.user?.name || `${sr.firstName} ${sr.lastName}`}</td>
-                       <td className="py-4 px-5 text-sm text-slate-700 whitespace-nowrap">{sr.user?.email || sr.email}</td>
-                       <td className="py-4 px-5 text-sm text-indigo-600 font-medium whitespace-nowrap">{sr.service?.name || sr.serviceName}</td>
-                       <td className="py-4 px-5 text-sm text-slate-500 whitespace-nowrap">{new Date(sr.preferredDate || sr.createdAt).toLocaleDateString()}</td>
-                       <td className="py-4 px-5 text-sm text-slate-500 whitespace-nowrap">{sr.preferredTime || '-'}</td>
-                       <td className="py-4 px-5 text-sm text-slate-700 whitespace-nowrap">Demande Service</td>
-                       <td className="py-4 px-5 text-sm text-slate-600 whitespace-normal max-w-xs truncate" title={sr.message}>{sr.message}</td>
-                       <td>
-                         {/* CTA: Envoyer un email */}
-                         <a
-                           href={`mailto:${sr.user?.email || sr.email}`}
-                           className="inline-flex items-center px-3 py-1 text-xs bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 font-medium"
-                         >
-                           Contacter
-                         </a>
-                       </td>
-                     </tr>
-                  ))}
-                  {(rdvs.length === 0 && serviceRequests.length === 0) && (
-                    <tr><td colSpan={8} className="py-4 px-5 text-sm text-slate-500 text-center">Aucun rendez-vous ou demande de service.</td></tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        {/* Liste des services et ajout de package */}
-        <section id="services" className="mb-12">
-          <h2 className="text-2xl font-semibold text-slate-700 mb-1">Services & Packages</h2>
-          <div className="border-b border-slate-200 mb-5"></div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Services Grid - Responsive */}
+        <section id="services" className="mb-8 md:mb-12">
+          <h2 className="text-xl md:text-2xl font-semibold text-slate-700 mb-1">Services & Packages</h2>
+          <div className="border-b border-slate-200 mb-4 md:mb-5"></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {services.map((service) => (
               <div
                 key={service.id}
-                className="bg-white p-6 rounded-xl shadow-lg flex flex-col h-full"
+                className="bg-white p-4 md:p-6 rounded-xl shadow-lg flex flex-col h-full"
               >
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    {/* Affichage couleur */}
                     {service.color && (
                       <span
-                        className="inline-block w-6 h-6 rounded-full border border-gray-200"
+                        className="inline-block w-5 h-5 md:w-6 md:h-6 rounded-full border border-gray-200"
                         style={{ backgroundColor: service.color }}
                         title={service.color}
                       />
                     )}
-                    <h3 className="text-xl font-semibold text-slate-800">{service.name}</h3>
+                    <h3 className="text-lg md:text-xl font-semibold text-slate-800">{service.name}</h3>
                   </div>
-                  <p className="text-sm text-slate-600 mb-1">{service.shortDesc}</p>
-                  <p className="text-sm text-slate-500 mb-3">Prix: {service.price} €</p>
+                  <p className="text-xs md:text-sm text-slate-600 mb-1">{service.shortDesc}</p>
+                  <p className="text-xs md:text-sm text-slate-500 mb-3">Prix: {service.price} €</p>
                   
                   {service.packages.length > 0 && (
                     <div className="mb-4">
-                      <span className="font-medium text-slate-700 mb-1 text-sm block">Packages Inclus:</span>
+                      <span className="font-medium text-slate-700 mb-1 text-xs md:text-sm block">Packages Inclus:</span>
                       <ul className="space-y-1">
                         {service.packages.map((pkg) => (
-                          <li key={pkg.id} className="text-sm text-slate-600 flex items-start">
+                          <li key={pkg.id} className="text-xs md:text-sm text-slate-600 flex items-start">
                             <Package size={14} className="mr-2 mt-0.5 text-emerald-500 flex-shrink-0" />
                             <div>
                                 <span className="font-medium">{pkg.name}</span> ({pkg.price} €)
@@ -473,105 +428,45 @@ export default async function AdminDashboardPage() {
                 </div>
 
                 <div className="mt-auto pt-4 border-t border-slate-200">
-                  <h4 className="text-sm font-medium text-slate-600 mb-2">Ajouter un package à ce service</h4>
-                  <form action={addPackage} className="space-y-3">
+                  <h4 className="text-xs md:text-sm font-medium text-slate-600 mb-2">Ajouter un package</h4>
+                  <form action={addPackage} className="space-y-2 md:space-y-3">
                     <input type="hidden" name="serviceId" value={service.id} />
                     <div>
-                      <label htmlFor={`packageName-${service.id}`} className="sr-only">Nom du package</label>
                       <input
-                        id={`packageName-${service.id}`}
                         name="packageName"
                         placeholder="Nom du package"
-                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm py-2 px-3.5 placeholder-slate-400"
+                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-xs md:text-sm py-2 px-3 placeholder-slate-400"
                         required
                       />
                     </div>
                     <div>
-                      <label htmlFor={`packageDescription-${service.id}`} className="sr-only">Description</label>
                       <input
-                        id={`packageDescription-${service.id}`}
                         name="packageDescription"
                         placeholder="Description"
-                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm py-2 px-3.5 placeholder-slate-400"
+                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-xs md:text-sm py-2 px-3 placeholder-slate-400"
                         required
                       />
                     </div>
                     <div>
-                      <label htmlFor={`packagePrice-${service.id}`} className="sr-only">Prix</label>
                       <input
-                        id={`packagePrice-${service.id}`}
                         name="packagePrice"
                         type="number"
                         step="0.01"
                         placeholder="Prix (€)"
-                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm py-2 px-3.5 placeholder-slate-400"
+                        className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-xs md:text-sm py-2 px-3 placeholder-slate-400"
                         required
                       />
                     </div>
                     <button
                       type="submit"
-                      className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
+                      className="w-full inline-flex items-center justify-center px-3 py-2 border border-transparent text-xs md:text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
                     >
-                      <PlusCircle size={18} className="mr-2"/> Ajouter Package
+                      <PlusCircle size={16} className="mr-2"/> Ajouter Package
                     </button>
                   </form>
                 </div>
-
-                <div className="flex gap-2 mb-2">
-                  {/* Modifier Service */}
-                  <details>
-                    <summary className="cursor-pointer text-xs text-indigo-600 hover:underline">Modifier</summary>
-                    <form action={editService} className="space-y-2 mt-2">
-                      <input type="hidden" name="serviceId" value={service.id} />
-                      <input name="name" defaultValue={service.name} className="border px-2 py-1 rounded w-full" />
-                      <input name="shortDesc" defaultValue={service.shortDesc} className="border px-2 py-1 rounded w-full" />
-                      <input name="icon" defaultValue={service.icon} className="border px-2 py-1 rounded w-full" />
-                      <input name="color" defaultValue={service.color || ""} className="border px-2 py-1 rounded w-full" />
-                      <input name="detailedDesc" defaultValue={service.detailedDesc} className="border px-2 py-1 rounded w-full" />
-                      <input name="price" type="number" step="0.01" defaultValue={service.price} className="border px-2 py-1 rounded w-full" />
-                      <input name="coverImage" defaultValue={service.coverImage} className="border px-2 py-1 rounded w-full" />
-                      <button type="submit" className="bg-indigo-600 text-white px-3 py-1 rounded text-xs">Enregistrer</button>
-                    </form>
-                  </details>
-                  {/* Supprimer Service */}
-                  <form action={deleteService} method="post">
-                    <input type="hidden" name="serviceId" value={service.id} />
-                    <button type="submit" className="text-xs text-red-600 hover:underline ml-2">Supprimer</button>
-                  </form>
-                </div>
-
-                <div className="mb-4">
-                  {service.packages.map((pkg) => (
-                    <div key={pkg.id} className="flex items-center gap-2">
-                      <span>
-                        <Package size={14} className="mr-2 mt-0.5 text-emerald-500 flex-shrink-0" />
-                        <span className="font-medium">{pkg.name}</span> ({pkg.price} €)
-                        <span className="block text-xs text-slate-500">{pkg.description}</span>
-                      </span>
-                      {/* Modifier Package */}
-                      <details>
-                        <summary className="cursor-pointer text-xs text-emerald-600 hover:underline">Modifier</summary>
-                        <form action={editPackage} className="flex flex-col gap-1 mt-1">
-                          <input type="hidden" name="packageId" value={pkg.id} />
-                          <input name="packageName" defaultValue={pkg.name} className="border px-2 py-1 rounded w-full" />
-                          <input name="packageDescription" defaultValue={pkg.description} className="border px-2 py-1 rounded w-full" />
-                          <input name="packagePrice" type="number" step="0.01" defaultValue={pkg.price} className="border px-2 py-1 rounded w-full" />
-                          <button type="submit" className="bg-emerald-600 text-white px-2 py-1 rounded text-xs">Enregistrer</button>
-                        </form>
-                      </details>
-                      {/* Supprimer Package */}
-                      <form action={deletePackage} method="post">
-                        <input type="hidden" name="packageId" value={pkg.id} />
-                        <button type="submit" className="text-xs text-red-600 hover:underline ml-2">Supprimer</button>
-                      </form>
-                    </div>
-                  ))}
-                </div>
               </div>
             ))}
-             {services.length === 0 && (
-                <p className="md:col-span-2 lg:col-span-3 py-4 px-5 text-sm text-slate-500 text-center">Aucun service n'a été créé pour le moment.</p>
-            )}
           </div>
         </section>
 
@@ -651,7 +546,6 @@ export default async function AdminDashboardPage() {
                         {new Date(u.createdAt).toLocaleDateString()}
                       </td>
                       <td>
-                        {/* CTA: Envoyer un email */}
                         <a
                           href={`mailto:${u.email}`}
                           className="inline-flex items-center px-3 py-1 text-xs bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 font-medium"
@@ -692,7 +586,15 @@ export default async function AdminDashboardPage() {
                     <tr key={t.id}>
                       <td className="py-4 px-5">
                         {t.photo ? (
-                          <Image src={t.photo} alt={t.nom} width={48} height={48} className="rounded-full object-cover" />
+                          <div className="relative w-12 h-12">
+                            <Image
+                              src={t.photo}
+                              alt={t.nom}
+                              fill
+                              className="rounded-full object-cover"
+                              unoptimized={t.photo.startsWith('http')}
+                            />
+                          </div>
                         ) : (
                           <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">-</div>
                         )}
@@ -700,7 +602,6 @@ export default async function AdminDashboardPage() {
                       <td className="py-4 px-5">{t.nom}</td>
                       <td className="py-4 px-5">{t.message}</td>
                       <td className="py-4 px-5">
-                        {/* Edit */}
                         <details>
                           <summary className="cursor-pointer text-xs text-indigo-600 hover:underline">Modifier</summary>
                           <form action={editTemoignage} className="flex flex-col gap-1 mt-1">
@@ -711,7 +612,6 @@ export default async function AdminDashboardPage() {
                             <button type="submit" className="bg-indigo-600 text-white px-2 py-1 rounded text-xs">Enregistrer</button>
                           </form>
                         </details>
-                        {/* Delete */}
                         <form action={deleteTemoignage} method="post" className="inline">
                           <input type="hidden" name="id" value={t.id} />
                           <button type="submit" className="text-xs text-red-600 hover:underline ml-2">Supprimer</button>
@@ -729,7 +629,6 @@ export default async function AdminDashboardPage() {
               </table>
             </div>
           </div>
-          {/* Formulaire d'ajout témoignage */}
           <form action={addTemoignage} className="flex flex-col md:flex-row gap-3 items-end">
             <input name="nom" placeholder="Nom" className="rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3 placeholder-slate-400" required />
             <input name="photo" placeholder="URL photo" className="rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3 placeholder-slate-400" />
@@ -782,7 +681,6 @@ export default async function AdminDashboardPage() {
                         {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '-'}
                       </td>
                       <td className="py-4 px-5">
-                        {/* Edit */}
                         <details>
                           <summary className="cursor-pointer text-xs text-indigo-600 hover:underline">Modifier</summary>
                           <form action={editPartner} className="flex flex-col gap-1 mt-1">
@@ -793,7 +691,6 @@ export default async function AdminDashboardPage() {
                             <button type="submit" className="bg-indigo-600 text-white px-2 py-1 rounded text-xs">Enregistrer</button>
                           </form>
                         </details>
-                        {/* Delete */}
                         <form action={deletePartner} method="post" className="inline">
                           <input type="hidden" name="id" value={p.id} />
                           <button type="submit" className="text-xs text-red-600 hover:underline ml-2">Supprimer</button>
@@ -811,7 +708,6 @@ export default async function AdminDashboardPage() {
               </table>
             </div>
           </div>
-          {/* Formulaire d'ajout partenaire */}
           <form
             action={async (formData: FormData) => {
               "use server";
@@ -867,6 +763,7 @@ export default async function AdminDashboardPage() {
                   <tr>
                     <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Titre</th>
                     <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>
+                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -877,7 +774,6 @@ export default async function AdminDashboardPage() {
                         {n.createdAt ? new Date(n.createdAt).toLocaleDateString() : '-'}
                       </td>
                       <td className="py-4 px-5">
-                        {/* Edit */}
                         <details>
                           <summary className="cursor-pointer text-xs text-indigo-600 hover:underline">Modifier</summary>
                           <form action={editNews} className="flex flex-col gap-1 mt-1">
@@ -889,7 +785,6 @@ export default async function AdminDashboardPage() {
                             <button type="submit" className="bg-indigo-600 text-white px-2 py-1 rounded text-xs">Enregistrer</button>
                           </form>
                         </details>
-                        {/* Delete */}
                         <form action={deleteNews} method="post" className="inline">
                           <input type="hidden" name="id" value={n.id} />
                           <button type="submit" className="text-xs text-red-600 hover:underline ml-2">Supprimer</button>
@@ -898,7 +793,7 @@ export default async function AdminDashboardPage() {
                     </tr>
                   )) : (
                     <tr>
-                      <td colSpan={2} className="py-4 px-5 text-sm text-slate-500 text-center">
+                      <td colSpan={3} className="py-4 px-5 text-sm text-slate-500 text-center">
                         Aucune actualité enregistrée.
                       </td>
                     </tr>
@@ -907,13 +802,14 @@ export default async function AdminDashboardPage() {
               </table>
             </div>
           </div>
-          {/* Lien ou bouton pour ajouter une actualité (à adapter selon votre logique) */}
-          <Link
-            href="/admin/news/create"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-          >
-            <PlusCircle size={18} /> Ajouter une actualité
-          </Link>
+          <div className="flex justify-end">
+            <Link
+              href="http://localhost:3000/admin/news/create"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+            >
+              <PlusCircle size={18} /> Ajouter une actualité
+            </Link>
+          </div>
         </section>
 
         {/* Section Contacts Home */}
@@ -1000,10 +896,7 @@ export default async function AdminDashboardPage() {
           <div className="border-b border-slate-200 mb-5"></div>
           <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-4">
             <div className="p-8 flex justify-center">
-              {/* Ajoutez ici votre composant CTA ou un aperçu */}
               <div className="w-full max-w-2xl">
-                {/* Exemple d'inclusion du composant BlocCta */}
-                {/* <BlocCta /> */}
                 <span className="text-slate-500">Bloc CTA à intégrer ici (voir composant BlocCta).</span>
               </div>
             </div>

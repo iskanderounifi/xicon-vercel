@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import ServiceForm from "./ServiceForm";
 
-export default async function EditServicePage({
+export default async function Page({
   params,
 }: {
   params: { id: string };
@@ -32,4 +32,4 @@ export default async function EditServicePage({
       <ServiceForm service={service} />
     </div>
   );
-} 
+}

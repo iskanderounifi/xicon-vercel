@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
+
+const prisma = new PrismaClient();
 
 const requestSchema = z.object({
   packageId: z.string(),
@@ -65,4 +67,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-} 
+}

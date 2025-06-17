@@ -23,7 +23,15 @@ const config: Config = {
         'brand-p2-c5': '#F3A950', // Orange-Yellow
         'brand-p2-c6': '#F5FFFF', // Almost White
         'brand-p3-c3': '#F20B8B', // Pink/Magenta
-
+        "P1-C1": "#6366F1", // Example: Indigo 500
+        "P1-C2": "#3B82F6", // Example: Blue 500
+        "P1-C3": "#F97316", // Example: Orange 500
+        "P2-C1": "#A855F7", // Example: Purple 500
+        "P2-C2": "#8B5CF6", // Example: Violet 500
+        "P2-C5": "#78716C", // Example: Stone 500
+        "P3-C3": "#EC4899", // Example: Pink 500
+        "P3-C4": "#14B8A6", // Example: Teal 500
+        "P3-C5": "#84CC16", // Example: Lime 500
         'custom-gray-700': '#374151',
         'custom-violet-950': '#311b92',
         'custom-dark-blue-gray': '#373552',
