@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-
+import prisma from "@/lib/prisma";
+import { notFound } from "next/navigation";
+import Image from "next/image";
 import Footer from '../../components/home/footer'; 
 import HeroSectionServices from '../../components/services/header-service';
 import MethodologySection from '../../components/services/methologie';
@@ -13,6 +15,8 @@ import Newsletter from '../../components/home/newletter';
 import NosValeursSection from '@/app/components/home/nos-valeur';
 import Header from '@/app/components/header_main';
 import { useParams } from "next/navigation";
+import { Contact } from 'lucide-react';
+import ServiceDetails from '../../components/services/service-details';
 
 // Types stricts selon votre schéma Prisma
 type Service = {
@@ -37,86 +41,45 @@ type Package = {
   updatedAt: string;
 };
 
-const ServiceDetailPage = () => {
-  const params = useParams();
-  const serviceId = typeof params?.id === "string" ? params.id : Array.isArray(params?.id) ? params.id[0] : "";
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
 
-  const [service, setService] = useState<Service | null>(null);
-  const [packs, setPacks] = useState<Package[]>([]);
-  const [loading, setLoading] = useState(true);
+export default async function ServiceDetailPage({ params }: PageProps) {
+  const service = await prisma.service.findUnique({
+    where: { id: params.id },
+    include: {
+      packages: true,
+    },
+  });
 
-  useEffect(() => {
-    if (!serviceId) {
-      setLoading(false);
-      setService(null);
-      return;
-    }
-    fetch(`/api/services/${serviceId}`)
-      .then(res => {
-        if (!res.ok) throw new Error("Not found");
-        return res.json();
-      })
-      .then(data => {
-        // data peut être { id, ... } ou { service, packages }
-        if (data && data.id) {
-          setService(data);
-          setPacks(Array.isArray(data.packages) ? data.packages : []);
-        } else if (data && data.service) {
-          setService(data.service);
-          setPacks(Array.isArray(data.packages) ? data.packages : []);
-        } else {
-          setService(null);
-          setPacks([]);
-        }
-        setLoading(false);
-      })
-      .catch(() => {
-        setService(null);
-        setPacks([]);
-        setLoading(false);
-      });
-  }, [serviceId]);
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] text-lg text-gray-500">
-        <span>Chargement...</span>
-      </div>
-    );
-  }
   if (!service) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] text-lg text-red-500">
-        Service introuvable
-      </div>
-    );
+    notFound();
   }
 
   return (
-   
-    <div className="">
-       <Header/>
+    <div className="space-y-6">
+      <Header />
       <HeroSectionServices
         id={service.id}
         name={service.name}
         price={service.price}
-        description={service.detailedDesc}
+        description={service.shortDesc}
         shortDesc={service.shortDesc}
+        icon={service.icon}
         coverImage={service.coverImage}
       />
-      <MethodologySection/>
-      <PricingSection packs={packs} />
-      <ContactSection/>
-      <PartnersSection/>
-      <CTABlock/>
-      <NosValeursSection/>
-      <Newsletter/>
-      <Footer/>
+      <PricingSection packs={service.packages} />
+      <MethodologySection />
+      <CTABlock />
+      <PartnersSection />
+      <ContactSection />
+      <Footer />
     </div>
   );
-};
-
-export default ServiceDetailPage;
+}
 
 
 

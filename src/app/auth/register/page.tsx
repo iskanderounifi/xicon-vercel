@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
+import { UserPlus } from "lucide-react"; // Icône appropriée pour l'inscription
 
 type RegisterForm = {
   name: string;
@@ -23,9 +24,10 @@ export default function RegisterPage() {
     formState: { errors },
   } = useForm<RegisterForm>();
 
+  // La logique d'envoi du formulaire est conservée
   const onSubmit = async (data: RegisterForm) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
@@ -38,115 +40,159 @@ export default function RegisterPage() {
         }),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
+        // Affiche le message d'erreur de l'API (par ex. "Email already exists")
+        throw new Error(result.message || "La création du compte a échoué.");
       }
 
-      toast.success("Registration successful!");
+      toast.success("Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
       router.push("/auth/login");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Something went wrong");
+      toast.error(error instanceof Error ? error.message : "Une erreur est survenue.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Create an Account</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    // Conteneur principal avec un fond gris clair
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
+      
+      {/* Carte d'inscription blanche avec une ombre douce */}
+      <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-lg border border-gray-200/80">
+        
+        <div className="text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            Créer un compte
+          </h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Rejoignez-nous en quelques secondes.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Champ Nom complet */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Name
+              Nom complet
             </label>
-            <input
-              {...register("name", { required: "Name is required" })}
-              type="text"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-            )}
+            <div className="mt-1">
+              <input
+                {...register("name", { required: "Le nom est requis" })}
+                type="text"
+                id="name"
+                autoComplete="name"
+                className="block w-full rounded-md border-gray-300 shadow-sm placeholder:text-gray-400 focus:border-gray-900 focus:ring-2 focus:ring-gray-900 sm:text-sm py-2.5 px-3"
+                placeholder="John Doe"
+              />
+              {errors.name && (
+                <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>
+              )}
+            </div>
           </div>
 
+          {/* Champ Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
+              Adresse e-mail
             </label>
-            <input
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: "Invalid email address",
-                },
-              })}
-              type="email"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-            )}
+            <div className="mt-1">
+              <input
+                {...register("email", {
+                  required: "L'email est requis",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Adresse email invalide",
+                  },
+                })}
+                type="email"
+                id="email"
+                autoComplete="email"
+                className="block w-full rounded-md border-gray-300 shadow-sm placeholder:text-gray-400 focus:border-gray-900 focus:ring-2 focus:ring-gray-900 sm:text-sm py-2.5 px-3"
+                placeholder="vous@exemple.com"
+              />
+              {errors.email && (
+                <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
+              )}
+            </div>
           </div>
 
+          {/* Champ Mot de passe */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
+              Mot de passe
             </label>
-            <input
-              {...register("password", {
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters",
-                },
-              })}
-              type="password"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
-            )}
+            <div className="mt-1">
+              <input
+                {...register("password", {
+                  required: "Le mot de passe est requis",
+                  minLength: {
+                    value: 6,
+                    message: "Le mot de passe doit faire au moins 6 caractères",
+                  },
+                })}
+                type="password"
+                id="password"
+                autoComplete="new-password"
+                className="block w-full rounded-md border-gray-300 shadow-sm placeholder:text-gray-400 focus:border-gray-900 focus:ring-2 focus:ring-gray-900 sm:text-sm py-2.5 px-3"
+                placeholder="••••••••"
+              />
+              {errors.password && (
+                <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>
+              )}
+            </div>
           </div>
 
+          {/* Champ Confirmer le mot de passe */}
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-              Confirm Password
+              Confirmer le mot de passe
             </label>
-            <input
-              {...register("confirmPassword", {
-                required: "Please confirm your password",
-                validate: (value) =>
-                  value === watch("password") || "Passwords do not match",
-              })}
-              type="password"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
-            {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.confirmPassword.message}
-              </p>
-            )}
+            <div className="mt-1">
+              <input
+                {...register("confirmPassword", {
+                  required: "Veuillez confirmer votre mot de passe",
+                  validate: (value) =>
+                    value === watch("password") || "Les mots de passe ne correspondent pas",
+                })}
+                type="password"
+                id="confirmPassword"
+                autoComplete="new-password"
+                className="block w-full rounded-md border-gray-300 shadow-sm placeholder:text-gray-400 focus:border-gray-900 focus:ring-2 focus:ring-gray-900 sm:text-sm py-2.5 px-3"
+                placeholder="••••••••"
+              />
+              {errors.confirmPassword && (
+                <p className="mt-2 text-sm text-red-600">{errors.confirmPassword.message}</p>
+              )}
+            </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-          >
-            {isLoading ? "Creating account..." : "Create Account"}
-          </button>
+          {/* Bouton d'inscription */}
+          <div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="flex w-full justify-center gap-2 items-center rounded-lg bg-gray-900 py-2.5 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <UserPlus className="h-5 w-5" />
+              <span>{isLoading ? "Création en cours..." : "Créer le compte"}</span>
+            </button>
+          </div>
         </form>
 
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Already have an account?{" "}
-          <Link href="/auth/login" className="text-blue-600 hover:text-blue-500">
-            Sign in
+        {/* Lien vers la connexion */}
+        <p className="text-center text-sm text-gray-600">
+          Déjà un compte ?{" "}
+          <Link
+            href="/auth/login"
+            className="font-semibold text-gray-800 hover:text-gray-900 hover:underline"
+          >
+            Se connecter
           </Link>
         </p>
       </div>
     </div>
   );
-} 
+}

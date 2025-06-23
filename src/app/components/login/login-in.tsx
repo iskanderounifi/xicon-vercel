@@ -3,6 +3,7 @@
 import React, { useState, FormEvent } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -18,20 +19,45 @@ const LoginForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setFeedback(null);
+
     try {
-      const res = await fetch("/api/auth/login-user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+      const response = await fetch('/api/auth/user-auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+        }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Erreur serveur");
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setFeedback(data.error || "Une erreur s'est produite lors de la connexion");
+        return;
+      }
+
+      // Stocker le token et les informations utilisateur dans le localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+      
       setFeedback("Connexion réussie. Redirection...");
+      
+      // Redirection vers le dashboard
       setTimeout(() => {
         router.push("/dashboard");
+        router.refresh();
       }, 1000);
     } catch (error: any) {
-      setFeedback(error.message || "Erreur lors de la connexion.");
+      console.error("Erreur de connexion:", error);
+      setFeedback(
+        error.message || 
+        "Une erreur s'est produite lors de la connexion. Veuillez réessayer plus tard."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -55,6 +81,29 @@ const LoginForm = () => {
               Bienvenue ! S'il vous plaît connectez-vous à votre compte.
             </p>
           </div>
+
+          {/* Messages de feedback */}
+          {feedback && (
+            <div className={`p-4 rounded-lg mb-4 ${
+              feedback.includes("réussie") 
+                ? "bg-green-50 border border-green-200 text-green-700" 
+                : "bg-red-50 border border-red-200 text-red-700"
+            }`}>
+              <div className="flex items-center">
+                {feedback.includes("réussie") ? (
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                )}
+                <p className="font-medium">{feedback}</p>
+              </div>
+            </div>
+          )}
+
           <form className="space-y-8" onSubmit={handleSubmit}>
             {/* Champ Email */}
             <div className="space-y-1">
@@ -103,10 +152,6 @@ const LoginForm = () => {
               </div>
             </div>
 
-            {feedback && (
-              <div className="mb-2 text-center text-red-600">{feedback}</div>
-            )}
-
             {/* Options */}
             <div className="flex justify-between items-center">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -130,14 +175,16 @@ const LoginForm = () => {
             <div className="space-y-4">
               <button
                 type="submit"
-                className="w-full h-16 bg-indigo-500 rounded-xl text-white text-base font-bold hover:bg-indigo-600 transition-colors"
+                disabled={isSubmitting}
+                className="w-full h-16 bg-indigo-500 rounded-xl text-white text-base font-bold hover:bg-indigo-600 transition-colors disabled:opacity-50"
               >
-                Connecter
+                {isSubmitting ? "Connexion en cours..." : "Connecter"}
               </button>
 
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
+                  onClick={() => signIn("google")}
                   className="h-16 rounded-xl border border-indigo-500 flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
                 >
                   <Image
@@ -150,6 +197,7 @@ const LoginForm = () => {
                 </button>
                 <button
                   type="button"
+                  onClick={() => signIn("facebook")}
                   className="h-16 rounded-xl border border-indigo-500 flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
                 >
                   <Image
@@ -167,7 +215,7 @@ const LoginForm = () => {
           <p className="text-center mt-8 text-zinc-700 text-base font-medium">
             Vous n'avez pas de compte ?{" "}
             <a
-              href="#"
+              href="/inscription"
               className="text-blue-600 font-semibold hover:underline"
             >
               Inscrivez-vous
@@ -211,7 +259,7 @@ const LoginForm = () => {
   );
 };
 
-// Composant pour l'icône de l'œil (à remplacer par votre propre SVG)
+// Composant pour l'icône de l'œil
 const EyeIcon = () => (
   <svg
     width="24"
@@ -238,3 +286,4 @@ const EyeIcon = () => (
 );
 
 export default LoginForm;
+

@@ -11,24 +11,35 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Champs obligatoires manquants." }, { status: 400 });
     }
 
-    // Correction : la table s'appelle Admin (avec un A majuscule) dans Prisma par défaut
-    const admin = await prisma.admin
-      ? await prisma.admin.findUnique({ where: { email } })
-      : await prisma.Admin.findUnique({ where: { email } });
-    // Si la propriété admin n'existe pas, utilise Admin (selon la casse du modèle dans schema.prisma)
-    // Si tu utilises le modèle généré par Prisma, c'est souvent prisma.admin ou prisma.Admin
+    // Recherche de l'utilisateur avec l'email
+    const user = await prisma.user.findUnique({
+      where: { 
+        email: email.toLowerCase() // Normalisation de l'email en minuscules
+      }
+    });
 
-    if (!admin) {
-      return NextResponse.json({ error: "Admin non trouvé." }, { status: 400 });
+    if (!user) {
+      return NextResponse.json({ error: "Email ou mot de passe incorrect." }, { status: 401 });
     }
-    const valid = await bcrypt.compare(password, admin.password);
+
+    const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
-      return NextResponse.json({ error: "Mot de passe incorrect." }, { status: 400 });
+      return NextResponse.json({ error: "Email ou mot de passe incorrect." }, { status: 401 });
     }
-    // TODO: gérer la session ou le JWT ici pour admin
-    return NextResponse.json({ message: "Connexion admin réussie.", type: "admin" });
-  } catch {
-    return NextResponse.json({ error: "Erreur serveur." }, { status: 500 });
+
+    // Retourne les informations de l'utilisateur (sans le mot de passe)
+    return NextResponse.json({
+      message: "Connexion réussie",
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: "USER"
+      }
+    });
+  } catch (error) {
+    console.error("Erreur de connexion:", error);
+    return NextResponse.json({ error: "Erreur lors de la connexion." }, { status: 500 });
   }
 }
 

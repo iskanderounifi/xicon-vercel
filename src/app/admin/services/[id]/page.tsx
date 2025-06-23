@@ -4,11 +4,13 @@ import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import ServiceForm from "./ServiceForm";
 
-export default async function Page({
-  params,
-}: {
-  params: { id: string };
-}) {
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
+
+export default async function Page({ params }: PageProps) {
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== "ADMIN") {

@@ -44,7 +44,7 @@ const RegisterForm = () => {
       !formData.password ||
       !formData.confirmPassword
     ) {
-      setError("Champs obligatoires manquants.");
+      setError("Tous les champs sont obligatoires.");
       setIsLoading(false);
       return;
     }
@@ -61,16 +61,13 @@ const RegisterForm = () => {
       return;
     }
 
-    // Ajoutez d'autres validations côté client si nécessaire (longueur, format email)
-
     try {
-      // Vérifie que l'API attend bien les bons champs (nom, prenom, email, password)
       const response = await fetch('/api/auth/register-client', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: formData.nom,         // Prisma attend probablement "name"
-          prenom: formData.prenom,    // Ajoute ce champ si tu l'as dans le modèle
+          name: formData.nom,
+          prenom: formData.prenom,
           email: formData.email,
           password: formData.password,
         }),
@@ -79,29 +76,15 @@ const RegisterForm = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Une erreur s'est produite.");
+        throw new Error(data.error || "Une erreur s'est produite lors de l'inscription.");
       }
 
-      setSuccessMessage(data.message || "Inscription réussie ! Vous pouvez maintenant vous connecter.");
-      // Optionnel: rediriger vers la page de connexion après un court délai
-      // ou connecter automatiquement l'utilisateur
-      // Pour l'instant, on affiche un message et l'utilisateur doit se connecter manuellement.
-      // router.push('/login');
-
-      // Connecter automatiquement l'utilisateur après l'inscription
-      const signInResponse = await signIn('credentials', {
-        redirect: false, // Ne pas rediriger par NextAuth, on le gère nous-mêmes
-        email: formData.email,
-        password: formData.password, // Le mot de passe non hashé
-      });
-
-      if (signInResponse?.error) {
-        setError(signInResponse.error === "CredentialsSignin" ? "Email ou mot de passe incorrect après inscription." : signInResponse.error);
-      } else if (signInResponse?.ok) {
-        router.push('/'); // Ou une autre page après connexion réussie
-        router.refresh(); // Pour s'assurer que la session est bien mise à jour
-      }
-
+      setSuccessMessage("Inscription réussie ! Un email de confirmation a été envoyé.");
+      
+      // Attendre 2 secondes avant de rediriger
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
 
     } catch (err) {
       setError((err as Error).message);
@@ -132,8 +115,27 @@ const RegisterForm = () => {
             </h1>
 
             {/* Messages d'erreur/succès */}
-            {error && <div className="p-3 bg-red-100 text-red-700 rounded-md">{error}</div>}
-            {successMessage && <div className="p-3 bg-green-100 text-green-700 rounded-md">{successMessage}</div>}
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg mb-6">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-red-700 font-medium">{error}</p>
+                </div>
+              </div>
+            )}
+
+            {successMessage && (
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg mb-6">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <p className="text-green-700 font-medium">{successMessage}</p>
+                </div>
+              </div>
+            )}
 
 
             <form onSubmit={handleSubmit} className="space-y-6">

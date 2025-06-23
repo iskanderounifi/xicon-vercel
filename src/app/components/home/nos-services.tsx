@@ -104,17 +104,25 @@ export default function NosServices() {
                   {service.name}
                 </h3>
                 <div className="text-xs text-gray-700 font-montserrat text-center flex flex-wrap gap-x-2 gap-y-1 justify-center">
-                  {service.shortDesc
-                    .split('\n')
-                    .filter(line => line.trim() !== "")
-                    .map((line, index) => (
-                      <span
-                        key={index}
-                        className="inline-block bg-gray-100 rounded px-2 py-1 mb-1"
-                      >
-                        {line}
-                      </span>
-                    ))}
+                 {/*
+  On utilise une liste standard.
+  - list-disc : Affiche les puces (c'est souvent le défaut).
+  - pl-5 : Ajoute un padding à gauche pour aligner le texte après la puce.
+*/}
+<ul className="text-xs text-gray-700 font-montserrat text-center flex flex-wrap gap-x-2 gap-y-1 justify-center list-none p-0">
+  {service.shortDesc
+    .split('\n')
+    .filter(line => line.trim() !== "")
+    .map((line, index) => (
+      // On remplace le <span> par <li>. La sémantique est maintenant correcte.
+      <li
+        key={index}
+        className="inline-block bg-gray-100 rounded px-2 py-1 mb-1"
+      >
+        {line}
+      </li>
+    ))}
+</ul>
                 </div>
               </div>
 
