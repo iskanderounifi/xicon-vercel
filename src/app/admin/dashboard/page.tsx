@@ -15,7 +15,6 @@ import {
   Newspaper,
   Handshake,
 } from "lucide-react";
-import { useState } from "react";
 import Image from "next/image";
 
 export default async function AdminDashboardPage() {
@@ -155,18 +154,6 @@ export default async function AdminDashboardPage() {
   }
 
   // CRUD server actions pour news
-  async function addNews(formData: FormData) {
-    "use server";
-    await prisma.news.create({
-      data: {
-        titre: formData.get("titre") as string,
-        description: formData.get("description") as string,
-        imageCover: formData.get("imageCover") as string,
-        imageCart: formData.get("imageCart") as string,
-      },
-    });
-    revalidatePath("/admin/dashboard");
-  }
   async function editNews(formData: FormData) {
     "use server";
     await prisma.news.update({
@@ -310,7 +297,7 @@ export default async function AdminDashboardPage() {
                       <tr>
                         <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nom</th>
                         <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
-                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date d'inscription</th>
+                        <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date d&apos;inscription</th>
                         <th scope="col" className="py-3 px-3 md:px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Action</th>
                       </tr>
                     </thead>
@@ -408,7 +395,28 @@ export default async function AdminDashboardPage() {
                   </div>
                   <p className="text-xs md:text-sm text-slate-600 mb-1">{service.shortDesc}</p>
                   <p className="text-xs md:text-sm text-slate-500 mb-3">Prix: {service.price} €</p>
-                  
+                  {/* Actions Service */}
+                  <div className="flex gap-2 mb-2">
+                    <details>
+                      <summary className="cursor-pointer text-xs text-indigo-600 hover:underline">Modifier</summary>
+                      <form action={editService} className="flex flex-col gap-1 mt-1">
+                        <input type="hidden" name="serviceId" value={service.id} />
+                        <input name="name" defaultValue={service.name} className="border px-2 py-1 rounded w-full" />
+                        <input name="shortDesc" defaultValue={service.shortDesc} className="border px-2 py-1 rounded w-full" />
+                        <input name="icon" defaultValue={service.icon || ""} className="border px-2 py-1 rounded w-full" />
+                        <input name="color" defaultValue={service.color || ""} className="border px-2 py-1 rounded w-full" />
+                        <input name="price" type="number" step="0.01" defaultValue={service.price ?? ""} className="border px-2 py-1 rounded w-full" />
+                        <input name="coverImage" defaultValue={service.coverImage || ""} className="border px-2 py-1 rounded w-full" />
+                        <textarea name="detailedDesc" defaultValue={service.detailedDesc || ""} className="border px-2 py-1 rounded w-full" />
+                        <button type="submit" className="bg-indigo-600 text-white px-2 py-1 rounded text-xs">Enregistrer</button>
+                      </form>
+                    </details>
+                    <form action={deleteService} method="post" className="inline">
+                      <input type="hidden" name="serviceId" value={service.id} />
+                      <button type="submit" className="text-xs text-red-600 hover:underline ml-2">Supprimer</button>
+                    </form>
+                  </div>
+                  {/* Packages inclus */}
                   {service.packages.length > 0 && (
                     <div className="mb-4">
                       <span className="font-medium text-slate-700 mb-1 text-xs md:text-sm block">Packages Inclus:</span>
@@ -417,8 +425,31 @@ export default async function AdminDashboardPage() {
                           <li key={pkg.id} className="text-xs md:text-sm text-slate-600 flex items-start">
                             <Package size={14} className="mr-2 mt-0.5 text-emerald-500 flex-shrink-0" />
                             <div>
-                                <span className="font-medium">{pkg.name}</span> ({pkg.price} €)
-                                <span className="block text-xs text-slate-500">{pkg.description}</span>
+                              <span className="font-medium">{pkg.name}</span> ({pkg.price} €)
+                              <span className="block text-xs text-slate-500">{pkg.description}</span>
+                              {/* Actions Package */}
+                              <div className="flex gap-2 mt-1">
+                                <details>
+                                  <summary className="cursor-pointer text-xs text-indigo-600 hover:underline">Modifier</summary>
+                                  <form action={editPackage} className="flex flex-col gap-1 mt-1">
+                                    <input type="hidden" name="packageId" value={pkg.id} />
+                                    <input name="packageName" defaultValue={pkg.name} className="border px-2 py-1 rounded w-full" />
+                                    <input name="packageDescription" defaultValue={pkg.description} className="border px-2 py-1 rounded w-full" />
+                                    <input
+                                      name="packagePrice"
+                                      type="number"
+                                      step="0.01"
+                                      defaultValue={pkg.price ?? ""}
+                                      className="border px-2 py-1 rounded w-full"
+                                    />
+                                    <button type="submit" className="bg-indigo-600 text-white px-2 py-1 rounded text-xs">Enregistrer</button>
+                                  </form>
+                                </details>
+                                <form action={deletePackage} method="post" className="inline">
+                                  <input type="hidden" name="packageId" value={pkg.id} />
+                                  <button type="submit" className="text-xs text-red-600 hover:underline ml-2">Supprimer</button>
+                                </form>
+                              </div>
                             </div>
                           </li>
                         ))}
@@ -426,7 +457,7 @@ export default async function AdminDashboardPage() {
                     </div>
                   )}
                 </div>
-
+                {/* ...existing code for add package form... */}
                 <div className="mt-auto pt-4 border-t border-slate-200">
                   <h4 className="text-xs md:text-sm font-medium text-slate-600 mb-2">Ajouter un package</h4>
                   <form action={addPackage} className="space-y-2 md:space-y-3">
@@ -534,7 +565,7 @@ export default async function AdminDashboardPage() {
                   <tr>
                     <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nom</th>
                     <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date d'inscription</th>
+                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date d&apos;inscription</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -654,7 +685,7 @@ export default async function AdminDashboardPage() {
                     <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Logo</th>
                     <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nom</th>
                     <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Email</th>
-                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date d'ajout</th>
+                    <th className="py-3 px-5 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date d&apos;ajout</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">

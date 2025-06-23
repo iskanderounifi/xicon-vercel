@@ -1,22 +1,28 @@
-import { PrismaClient } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
-
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
-  if (!id) {
-    return NextResponse.json({ error: "Missing id" }, { status: 400 });
-  }
+// Récupérer un service par id
+export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const service = await prisma.service.findUnique({
-    where: { id },
+    where: { id: params.id },
     include: { packages: true },
   });
-  if (!service) {
-    return NextResponse.json({ error: "Service not found" }, { status: 404 });
-  }
+  if (!service) return NextResponse.json({ error: "Service non trouvé" }, { status: 404 });
   return NextResponse.json(service);
+}
+
+// Modifier un service
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
+  const data = await req.json();
+  const service = await prisma.service.update({
+    where: { id: params.id },
+    data,
+  });
+  return NextResponse.json(service);
+}
+
+// Supprimer un service
+export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+  await prisma.service.delete({ where: { id: params.id } });
+  return NextResponse.json({ message: "Service supprimé" });
 }
