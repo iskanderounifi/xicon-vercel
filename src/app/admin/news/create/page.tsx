@@ -2,7 +2,7 @@
 import { PlusCircle, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
-
+import Image from "next/image";
 export default function NewsCreatePage() {
   const [imageUrl, setImageUrl] = useState("");
   const [imageCart, setImageCart] = useState("");
@@ -73,7 +73,7 @@ export default function NewsCreatePage() {
             />
             {imageUrl && (
               <div className="mt-2">
-                <img
+                <Image
                   src={imageUrl}
                   alt="Aperçu"
                   className="max-h-40 rounded-lg border border-slate-200"
@@ -94,7 +94,7 @@ export default function NewsCreatePage() {
             />
             {imageCart && (
               <div className="mt-2">
-                <img
+                <Image
                   src={imageCart}
                   alt="Aperçu Cart"
                   className="max-h-40 rounded-lg border border-slate-200"

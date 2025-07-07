@@ -4,7 +4,7 @@ import React, { useState, FormEvent, ChangeEvent } from 'react';
 import Link from 'next/link';
 import { signIn } from "next-auth/react"; // Pour la connexion via fournisseurs sociaux
 import { useRouter } from 'next/navigation'; // Pour la redirection après inscription
-
+import Image from 'next/image'; // Pour les images
 const RegisterForm = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -311,7 +311,7 @@ const RegisterForm = () => {
                   onClick={() => signIn('google', { callbackUrl: '/' })} // Rediriger vers l'accueil après connexion Google
                   className="h-16 rounded-xl border border-indigo-500 flex items-center justify-center gap-2 hover:bg-gray-50 transition duration-200 text-gray-700 font-medium"
                 >
-                  <img src="/assets/icon/google.png" alt="Google" className="w-6 h-6" /> {/* Utilisez un SVG local ou une meilleure icône */}
+                  <Image src="/assets/icon/google.png" alt="Google" width={24} height={24} className="w-6 h-6" /> {/* Utilisez un SVG local ou une meilleure icône */}
                   Continuer avec Google
                 </button>
                 <button
@@ -319,7 +319,7 @@ const RegisterForm = () => {
                   onClick={() => signIn('facebook', { callbackUrl: '/' })} // Rediriger vers l'accueil après connexion Facebook
                   className="h-16 rounded-xl border border-indigo-500 flex items-center justify-center gap-2 hover:bg-gray-50 transition duration-200 text-gray-700 font-medium"
                 >
-                  <img src="/assets/icon/gmail.png" alt="Facebook" className="w-6 h-6" /> {/* Utilisez un SVG local ou une meilleure icône */}
+                  <Image src="/assets/icon/gmail.png" alt="Facebook" width={24} height={24} /> {/* Utilisez un SVG local ou une meilleure icône */}
                   Continuer avec Facebook
                 </button>
               </div>
@@ -336,9 +336,11 @@ const RegisterForm = () => {
 
         {/* Image de droite (inchangée) */}
         <div className="hidden lg:block lg:w-1/2 relative">
-          <img
+          <Image
             src="/assets/log/ins.png" // Image plus pertinente
             alt="Apprentissage en ligne"
+            width={600}
+            height={800}
             className="w-full h-full object-cover rounded-[40px]"
           />
            <div className="absolute top-4 left-4 flex items-center">
@@ -347,8 +349,8 @@ const RegisterForm = () => {
                         key={item}
                         className="w-8 h-8 rounded-full border-2 border-white -ml-2 first:ml-0 overflow-hidden"
                       >
-                        {/* Utilisez <img> au lieu de <Image> pour éviter les erreurs côté serveur */}
-                        <img
+                        {/* Utilisez <Image> au lieu de <Image> pour éviter les erreurs côté serveur */}
+                        <Image
                           src="/assets/icon/1.svg"
                           width={34}
                           height={34}

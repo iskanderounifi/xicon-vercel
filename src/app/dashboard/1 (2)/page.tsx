@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { News } from "../../models/news";
 import Link from "next/link";
-
+import Image from "next/image";
 const API_URL = "/api/news";
 
 export default function DashboardNewsPage() {
@@ -129,10 +129,10 @@ export default function DashboardNewsPage() {
             <tr key={news.id}>
               <td style={{ padding: 8, border: "1px solid #eee" }}>{news.titre}</td>
               <td style={{ padding: 8, border: "1px solid #eee" }}>
-                <img src={news.imageCover} alt="" style={{ width: 60, height: 40, objectFit: "cover" }} />
+                <Image src={news.imageCover} alt="" style={{ width: 60, height: 40, objectFit: "cover" }} />
               </td>
               <td style={{ padding: 8, border: "1px solid #eee" }}>
-                <img src={news.imageCart} alt="" style={{ width: 60, height: 40, objectFit: "cover" }} />
+                <Image src={news.imageCart} alt="" style={{ width: 60, height: 40, objectFit: "cover" }} />
               </td>
               <td style={{ padding: 8, border: "1px solid #eee", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {news.description}
